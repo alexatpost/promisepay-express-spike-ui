@@ -55,6 +55,7 @@ class Payment extends React.Component {
             }
         ).then((orderResponse) => {
             console.log(orderResponse);
+            alert('Your order is now: ' + orderResponse.data);
         });
     };
 

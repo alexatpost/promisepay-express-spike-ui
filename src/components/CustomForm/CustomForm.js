@@ -3,17 +3,31 @@ import axios from 'axios';
 import environment from '../../config/environment';
 
 class CustomForm extends React.Component {
-    
-    componentWillMount() {
-        axios.post(`${environment.apiUrl}/pp/buyer/card`, {
-            // todo post name and email
-        }).then((response) => {
-            // todo returns buyer id and a generated token
-        });
+
+    constructor(props) {
+        super(props);
+        this.state ={
+            createCardToken: ''
+        };
     }
     
     componentDidMount() {
         window.promisepay.createCardAccountForm('promisepay-form', this.handleCardAccountCreated, this.handleFailure);
+        const {fullName, email} = this.props.location.query;
+        console.log(fullName + email);
+        if (fullName && email) {
+            axios.post(`${environment.apiUrl}/pp/buyer/card`, {
+                // todo post name and email
+                full_name: fullName,
+                email: email
+            }).then((response) => {
+                // todo returns buyer id and a generated token
+                this.setState({
+                    createCardToken: response.data.card_token,
+                    buyerId: response.data.buyer_id
+                });
+            });
+        }
     }
     
     handleCardAccountCreated = (data) => {
@@ -25,12 +39,11 @@ class CustomForm extends React.Component {
     };
     
     render() {
+        const style={display: 'none'};
+
+        console.log(this.props);
         return (
             <form id="promisepay-form" autoComplete="on" action="payment">
-                <label className="label">Email</label>
-                <p className="control">
-                    <input id="email" type="text" placeholder="Email" className="input"/>
-                </p>
 
                 <label className="label">Full name</label>
                 <p className="control">
@@ -56,7 +69,7 @@ class CustomForm extends React.Component {
                            data-promisepay-encrypted-name="cardCVC" className="input"/>
                 </p>
 
-                <input id="cardToken" type="hidden" data-promisepay-card-token="GENERATED_TOKEN" className="input"/>
+                <input id="cardToken" type="hidden" data-promisepay-card-token={this.state.createCardToken} className="input"/>
 
                 <p className="promisepay-server-error" style={style}></p>
 

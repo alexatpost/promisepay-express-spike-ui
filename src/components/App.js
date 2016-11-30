@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import Payment from './Payment/Payment';
+import CustomForm from './CustomForm/CustomForm';
 
 import 'bulma/css/bulma.css';
 import './App.css';
@@ -15,7 +16,7 @@ class App extends Component {
                 </nav>
                 <div className="section">
                     <div className="container">
-                        <Payment/>
+                        {this.props.children}
                     </div>
                 </div>
             </div>
